@@ -8,17 +8,39 @@
   import { obtenerReportes } from './lib/db'
   import { iniciarSyncAuto } from './lib/sync'
 
+  let installPrompt: any = null
+  let mostrarBannerInstalar = false
+
   onMount(async () => {
-    // Cargar reportes locales al iniciar.
     const locales = await obtenerReportes()
     reportes.set(locales)
 
-    // Iniciar sync automático con el servidor cuando hay señal.
     iniciarSyncAuto(async () => {
       const actualizados = await obtenerReportes()
       reportes.set(actualizados)
     })
+
+    // Capturar el evento de instalación del navegador
+    window.addEventListener('beforeinstallprompt', (e: Event) => {
+      e.preventDefault()
+      installPrompt = e
+      mostrarBannerInstalar = true
+    })
+
+    // Si ya está instalada como app, no mostrar el banner
+    window.addEventListener('appinstalled', () => {
+      mostrarBannerInstalar = false
+      installPrompt = null
+    })
   })
+
+  async function instalarApp() {
+    if (!installPrompt) return
+    installPrompt.prompt()
+    const { outcome } = await installPrompt.userChoice
+    if (outcome === 'accepted') mostrarBannerInstalar = false
+    installPrompt = null
+  }
 </script>
 
 <div class="app">
@@ -29,6 +51,14 @@
     </div>
     <p class="tagline">Comunicación de emergencia</p>
   </header>
+
+  {#if mostrarBannerInstalar}
+    <div class="banner-instalar">
+      <span>📲 Instala la app para usarla sin internet</span>
+      <button on:click={instalarApp}>Instalar</button>
+      <button class="cerrar" on:click={() => mostrarBannerInstalar = false}>✕</button>
+    </div>
+  {/if}
 
   <EstadoConexion />
 
@@ -94,6 +124,33 @@
   @keyframes pulso {
     0%, 100% { opacity: 1; transform: scale(1); }
     50% { opacity: 0.5; transform: scale(0.85); }
+  }
+
+  .banner-instalar {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    background: #c0392b;
+    color: #fff;
+    font-size: 0.9rem;
+    flex-wrap: wrap;
+  }
+  .banner-instalar span { flex: 1; }
+  .banner-instalar button {
+    background: #fff;
+    color: #c0392b;
+    border: none;
+    padding: 0.35rem 0.9rem;
+    border-radius: 6px;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 0.85rem;
+  }
+  .banner-instalar .cerrar {
+    background: transparent;
+    color: rgba(255,255,255,0.7);
+    padding: 0.35rem 0.5rem;
   }
 
   h1 { font-size: 1.1rem; font-weight: 800; letter-spacing: 0.05em; color: #fff; }
