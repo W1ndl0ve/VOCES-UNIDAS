@@ -4,6 +4,7 @@ nixPkgs = ["go", "nodejs_20"]
 [phases.build]
 cmds = [
   "cd apps/pwa && npm install && npm run build",
+  "cp -r apps/landing/. apps/server/static/",
   "cd apps/server && go build -o ../../dist/server ."
 ]
 
