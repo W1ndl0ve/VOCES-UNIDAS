@@ -36,17 +36,8 @@
     })
   })
 
-  async function instalarApp() {
-    if (installPrompt) {
-      // Chrome ya tiene el prompt listo — dispararlo directamente
-      installPrompt.prompt()
-      const { outcome } = await installPrompt.userChoice
-      if (outcome === 'accepted') mostrarBannerInstalar = false
-      installPrompt = null
-    } else {
-      // Otros navegadores — mostrar instrucciones manuales
-      mostrarModalInstalar = true
-    }
+  function instalarApp() {
+    mostrarModalInstalar = true
   }
 </script>
 
@@ -73,7 +64,11 @@
   {/if}
 
   {#if mostrarModalInstalar}
-    <InstalarApp onCerrar={() => mostrarModalInstalar = false} />
+    <InstalarApp
+      {installPrompt}
+      onInstalado={() => { mostrarModalInstalar = false; mostrarBannerInstalar = false }}
+      onCerrar={() => mostrarModalInstalar = false}
+    />
   {/if}
 
   <EstadoConexion />
