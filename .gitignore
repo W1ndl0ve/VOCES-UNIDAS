@@ -26,3 +26,6 @@ apps/pwa/.env
 # OS
 .DS_Store
 Thumbs.db
+
+# Agentes y reglas internas (privado)
+.agents/
