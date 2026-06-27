@@ -25,7 +25,7 @@ var DB *gorm.DB
 func InitDB() {
 	dbPath := os.Getenv("DB_PATH")
 	if dbPath == "" {
-		dbPath = "voces_unidas.db"
+		dbPath = "/tmp/voces_unidas.db"
 	}
 
 	var err error
