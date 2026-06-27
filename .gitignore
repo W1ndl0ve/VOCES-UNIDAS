@@ -14,6 +14,11 @@ apps/landing/node_modules/
 # Build output (generado por `npm run build:pwa`)
 apps/server/static/*
 !apps/server/static/.gitkeep
+!apps/server/static/app/
+apps/server/static/app/*
+!apps/server/static/app/icons/
+!apps/server/static/app/icons/icon-192.png
+!apps/server/static/app/icons/icon-512.png
 
 # Env
 .env
