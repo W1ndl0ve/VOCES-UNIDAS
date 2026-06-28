@@ -37,7 +37,20 @@
   })
 
   function instalarApp() {
-    mostrarModalInstalar = true
+    if (installPrompt) {
+      // Chrome tiene el prompt nativo listo — usarlo
+      installPrompt.prompt()
+      installPrompt.userChoice.then(({ outcome }: { outcome: string }) => {
+        if (outcome === 'accepted') mostrarBannerInstalar = false
+        installPrompt = null
+      })
+    } else {
+      // Descargar APK directamente
+      const a = document.createElement('a')
+      a.href = '/VocesUnidas.apk'
+      a.download = 'VocesUnidas.apk'
+      a.click()
+    }
   }
 </script>
 
@@ -63,13 +76,6 @@
     </button>
   {/if}
 
-  {#if mostrarModalInstalar}
-    <InstalarApp
-      {installPrompt}
-      onInstalado={() => { mostrarModalInstalar = false; mostrarBannerInstalar = false }}
-      onCerrar={() => mostrarModalInstalar = false}
-    />
-  {/if}
 
   <EstadoConexion />
 
