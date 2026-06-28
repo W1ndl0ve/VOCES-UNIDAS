@@ -3,7 +3,8 @@
   import { TIPO_LABEL, TIPO_EMOJI, type TipoAlerta, type Reporte } from '../lib/types'
   import { guardarReporte } from '../lib/db'
   import { getDeviceId, newReporteId } from '../lib/crypto'
-  import { reportes, vista } from '../lib/store'
+  import { get } from 'svelte/store'
+  import { reportes, vista, meshNode } from '../lib/store'
 
   const dispatch = createEventDispatcher<{ nuevo: Reporte }>()
 
@@ -60,6 +61,10 @@
 
     await guardarReporte(reporte)
     reportes.update(lista => [reporte, ...lista])
+
+    // Propagar al mesh — llega a todos los dispositivos cercanos sin internet
+    const nodo = get(meshNode)
+    if (nodo) nodo.publicarReporte(reporte)
     dispatch('nuevo', reporte)
 
     mensaje = ''

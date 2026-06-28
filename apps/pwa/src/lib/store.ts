@@ -1,11 +1,13 @@
 import { writable, derived } from 'svelte/store'
 import type { Reporte } from './types'
+import type { MeshNode } from './mesh'
 
 export const reportes = writable<Reporte[]>([])
 export const online = writable(navigator.onLine)
 export const peerCount = writable(0)
 export const roomId = writable<string | null>(null)
 export const vista = writable<'lista' | 'crear' | 'mapa' | 'conectar'>('lista')
+export const meshNode = writable<MeshNode | null>(null)
 
 export const totalReportes = derived(reportes, $r => $r.length)
 export const pendientesSincronizar = derived(

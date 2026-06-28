@@ -5,13 +5,17 @@
   import ListaReportes from './components/ListaReportes.svelte'
   import QRConectar from './components/QRConectar.svelte'
   import InstalarApp from './components/InstalarApp.svelte'
-  import { reportes, vista } from './lib/store'
+  import { reportes, vista, peerCount, roomId, meshNode } from './lib/store'
   import { obtenerReportes } from './lib/db'
   import { iniciarSyncAuto } from './lib/sync'
+  import { MeshNode } from './lib/mesh'
+  import type { Reporte } from './lib/types'
 
   let installPrompt: any = null
   let mostrarBannerInstalar = false
   let mostrarModalInstalar = false
+
+  const ROOM_GLOBAL = 'voces-unidas-v1'
 
   // True si corre como TWA/standalone (ya instalada como app nativa)
   const esAppInstalada = window.matchMedia('(display-mode: standalone)').matches
@@ -26,6 +30,22 @@
       const actualizados = await obtenerReportes()
       reportes.set(actualizados)
     })
+
+    // Conectar automáticamente al mesh global al iniciar
+    const node = new MeshNode(
+      ROOM_GLOBAL,
+      (nuevos: Reporte[]) => {
+        reportes.update(actual => {
+          const ids = new Set(actual.map(r => r.reporte_id))
+          const noRepetidos = nuevos.filter(r => !ids.has(r.reporte_id))
+          return noRepetidos.length ? [...noRepetidos, ...actual] : actual
+        })
+      },
+      (n: number) => peerCount.set(n)
+    )
+    node.conectar(5)
+    meshNode.set(node)
+    roomId.set(ROOM_GLOBAL)
 
     if (!esAppInstalada) {
       window.addEventListener('beforeinstallprompt', (e: Event) => {
