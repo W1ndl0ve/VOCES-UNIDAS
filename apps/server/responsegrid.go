@@ -41,11 +41,11 @@ func tipoToRG(tipo int32) (priority string, category string) {
 	case 2: // Alimentos
 		return "high", "food"
 	case 3: // Seguridad
-		return "high", "general"
+		return "high", "other"
 	case 4: // Infraestructura
-		return "medium", "general"
+		return "medium", "tools"
 	default:
-		return "low", "general"
+		return "low", "other"
 	}
 }
 
