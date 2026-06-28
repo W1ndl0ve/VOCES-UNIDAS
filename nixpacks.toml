@@ -8,5 +8,8 @@ cmds = [
   "cd apps/server && go build -o ../../dist/server ."
 ]
 
+[phases.build.env]
+CGO_ENABLED = "0"
+
 [start]
 cmd = "./dist/server"

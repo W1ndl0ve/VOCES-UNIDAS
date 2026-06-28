@@ -1,0 +1,10 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "app.voces.unidas",
+    "sha256_cert_fingerprints": [
+      "D8:EB:BE:B9:BE:B1:C2:32:2D:F7:3C:3B:3A:94:9E:7F:11:E4:07:4C:52:E5:59:94:1C:F0:5E:06:0B:E4:A5:FF"
+    ]
+  }
+}]

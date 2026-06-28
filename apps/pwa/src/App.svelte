@@ -13,6 +13,11 @@
   let mostrarBannerInstalar = false
   let mostrarModalInstalar = false
 
+  // True si corre como TWA/standalone (ya instalada como app nativa)
+  const esAppInstalada = window.matchMedia('(display-mode: standalone)').matches
+    || window.matchMedia('(display-mode: fullscreen)').matches
+    || (navigator as any).standalone === true
+
   onMount(async () => {
     const locales = await obtenerReportes()
     reportes.set(locales)
@@ -22,18 +27,17 @@
       reportes.set(actualizados)
     })
 
-    // Capturar el evento de instalación del navegador
-    window.addEventListener('beforeinstallprompt', (e: Event) => {
-      e.preventDefault()
-      installPrompt = e
-      mostrarBannerInstalar = true
-    })
-
-    // Si ya está instalada como app, no mostrar el banner
-    window.addEventListener('appinstalled', () => {
-      mostrarBannerInstalar = false
-      installPrompt = null
-    })
+    if (!esAppInstalada) {
+      window.addEventListener('beforeinstallprompt', (e: Event) => {
+        e.preventDefault()
+        installPrompt = e
+        mostrarBannerInstalar = true
+      })
+      window.addEventListener('appinstalled', () => {
+        mostrarBannerInstalar = false
+        installPrompt = null
+      })
+    }
   })
 
   function instalarApp() {
@@ -69,8 +73,8 @@
     <button class="cerrar" on:click={() => mostrarBannerInstalar = false}>✕</button>
   </div>
 
-  <!-- Botón fijo de instalar siempre visible para navegadores sin prompt -->
-  {#if !mostrarBannerInstalar}
+  <!-- Botón fijo solo visible si NO está instalada como app nativa -->
+  {#if !mostrarBannerInstalar && !esAppInstalada}
     <button class="btn-instalar-fijo" on:click={instalarApp}>
       📲 Instalar app
     </button>

@@ -20,6 +20,8 @@ apps/server/static/app/*
 !apps/server/static/app/icons/icon-192.png
 !apps/server/static/app/icons/icon-512.png
 !apps/server/static/VocesUnidas.apk
+!apps/server/static/.well-known/
+!apps/server/static/.well-known/assetlinks.json
 
 # Env
 .env
